@@ -1,3 +1,5 @@
+package com.example.petmed;
+
 public class MedicationService {
 
     public static String getMedications(String type, double weight) {
