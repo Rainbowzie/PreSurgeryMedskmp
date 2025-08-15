@@ -14,4 +14,5 @@ RUN mvn -DskipTests=true package
 EXPOSE 4567
 
 # Run your app
-CMD ["java", "-jar", "target/petmed-api-1.0.0-jar-with-dependencies.jar"]
+CMD ["java", "-cp", "target/petmed-api-1.0.0-jar-with-dependencies.jar"]
+
