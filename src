@@ -1,0 +1,36 @@
+public class MedicationService {
+
+    public static String getMedications(String type, double weight) {
+        type = type.toLowerCase();
+        StringBuilder meds = new StringBuilder();
+
+        if (type.equals("cat")) {
+            meds.append("Gabapentin: ");
+            if (weight < 5) meds.append("50 mg by mouth");
+            else if (weight <= 10) meds.append("100 mg by mouth");
+            else meds.append("150 mg by mouth");
+        } else if (type.equals("dog")) {
+            meds.append("Cerenia: ");
+            if (weight < 10) meds.append("8 mg by mouth");
+            else if (weight <= 20) meds.append("16 mg by mouth");
+            else meds.append("24 mg by mouth");
+
+            meds.append(" | Trazodone: ");
+            if (weight < 20) meds.append("50 mg by mouth");
+            else meds.append("100 mg by mouth");
+
+            meds.append(" | Gabapentin: ");
+            if (weight < 10) meds.append("100 mg by mouth");
+            else if (weight <= 30) meds.append("200 mg by mouth");
+            else meds.append("300 mg by mouth");
+        } else {
+            return "Unknown animal type.";
+        }
+
+        return meds.toString();
+    }
+}
+
+
+
+
