@@ -2,34 +2,46 @@ package com.example.petmed;
 
 public class MedicationService {
 
-    public static String getMedications(String type, double weight) {
-        type = type.toLowerCase();
-        StringBuilder meds = new StringBuilder();
+    public static class MedResponse {
+        public String gabapentin;
+        public String cerenia;
+        public String trazodone;
+    }
 
-        if (type.equals("cat")) {
-            meds.append("Gabapentin: ");
-            if (weight < 5) meds.append("50 mg by mouth");
-            else if (weight <= 10) meds.append("100 mg by mouth");
-            else meds.append("150 mg by mouth");
-        } else if (type.equals("dog")) {
-            meds.append("Cerenia: ");
-            if (weight < 10) meds.append("8 mg by mouth");
-            else if (weight <= 20) meds.append("16 mg by mouth");
-            else meds.append("24 mg by mouth");
+    public MedResponse getMedications(String type, double weight) {
+        MedResponse resp = new MedResponse();
 
-            meds.append(" | Trazodone: ");
-            if (weight < 20) meds.append("50 mg by mouth");
-            else meds.append("100 mg by mouth");
-
-            meds.append(" | Gabapentin: ");
-            if (weight < 10) meds.append("100 mg by mouth");
-            else if (weight <= 30) meds.append("200 mg by mouth");
-            else meds.append("300 mg by mouth");
+        if ("cat".equalsIgnoreCase(type)) {
+            resp.gabapentin = calculateGabapentinForCat(weight);
+            resp.cerenia = null;
+            resp.trazodone = null;
+        } else if ("dog".equalsIgnoreCase(type)) {
+            resp.gabapentin = calculateGabapentinForDog(weight);
+            resp.cerenia = calculateCereniaForDog(weight);
+            resp.trazodone = calculateTrazodoneForDog(weight);
         } else {
-            return "Unknown animal type.";
+            resp.gabapentin = null;
+            resp.cerenia = null;
+            resp.trazodone = null;
         }
+        return resp;
+    }
 
-        return meds.toString();
+    private String calculateGabapentinForCat(double weight) {
+        return weight + " mg"; // replace with your real formula
+    }
+
+    private String calculateGabapentinForDog(double weight) {
+        return weight + " mg";
+    }
+
+    private String calculateCereniaForDog(double weight) {
+        return weight + " mg";
+    }
+
+    private String calculateTrazodoneForDog(double weight) {
+        return weight + " mg";
     }
 }
+
 
