@@ -1,65 +1,55 @@
 package com.example.petmed;
 
 import static spark.Spark.*;
+
 import com.google.gson.Gson;
+import java.util.HashMap;
+import java.util.Map;
 
 public class App {
     public static void main(String[] args) {
-        port(getHerokuAssignedPort()); // Render uses this pattern too
+        // Render requires Spark to listen on PORT env variable
+        port(getHerokuAssignedPort());
 
-        // Allow CORS
-        options("/*", (request, response) -> {
-            String accessControlRequestHeaders = request.headers("Access-Control-Request-Headers");
-            if (accessControlRequestHeaders != null) {
-                response.header("Access-Control-Allow-Headers", accessControlRequestHeaders);
-            }
-            String accessControlRequestMethod = request.headers("Access-Control-Request-Method");
-            if (accessControlRequestMethod != null) {
-                response.header("Access-Control-Allow-Methods", accessControlRequestMethod);
-            }
-            return "OK";
-        });
+        // Basic test route
+        get("/", (req, res) -> "🚀 PetMed API is running!");
 
-        before((request, response) -> response.header("Access-Control-Allow-Origin", "*"));
-
-        get("/health", (req, res) -> {
-            res.type("application/json");
-            return new Gson().toJson(new Status("ok"));
-        });
-
+        // Main meds route
         get("/meds", (req, res) -> {
-            String type = req.queryParams("type");
-            String weightStr = req.queryParams("weight");
+            String pet = req.queryParams("pet");
+            String weightParam = req.queryParams("weight");
+            double weight = (weightParam != null) ? Double.parseDouble(weightParam) : 0;
+
+            Map<String, String> meds = new HashMap<>();
+            if ("cat".equalsIgnoreCase(pet)) {
+                meds.put("Gabapentin", calcDose(weight, "cat"));
+            } else if ("dog".equalsIgnoreCase(pet)) {
+                meds.put("Gabapentin", calcDose(weight, "dog"));
+                meds.put("Cerenia", "Give 2 hours before surgery");
+                meds.put("Trazodone", "Give night before surgery");
+            } else {
+                res.status(400);
+                return "Invalid pet type. Use 'dog' or 'cat'.";
+            }
+
             res.type("application/json");
-
-            if (type == null || weightStr == null) {
-                res.status(400);
-                return new Gson().toJson(new ErrorMessage("Missing parameters 'type' and 'weight'"));
-            }
-
-            double weight;
-            try {
-                weight = Double.parseDouble(weightStr);
-            } catch (NumberFormatException e) {
-                res.status(400);
-                return new Gson().toJson(new ErrorMessage("Invalid weight format"));
-            }
-
-            String result = MedicationService.getMedications(type, weight);
-            return new Gson().toJson(new MedResult(result));
+            return new Gson().toJson(meds);
         });
     }
 
-    static int getHerokuAssignedPort() {
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        if (processBuilder.environment().get("PORT") != null) {
-            return Integer.parseInt(processBuilder.environment().get("PORT"));
+    private static int getHerokuAssignedPort() {
+        String port = System.getenv("PORT");
+        if (port != null) {
+            return Integer.parseInt(port);
         }
-        return 4567; // default
+        return 4567; // default when running locally
     }
 
-    record Status(String status) {}
-    record ErrorMessage(String error) {}
-    record MedResult(String medications) {}
+    private static String calcDose(double weight, String pet) {
+        if ("cat".equalsIgnoreCase(pet)) {
+            return weight * 10 + " mg Gabapentin";
+        } else {
+            return weight * 5 + " mg Gabapentin";
+        }
+    }
 }
-
