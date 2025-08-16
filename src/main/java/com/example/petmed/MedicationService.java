@@ -43,3 +43,4 @@ private String calculateCereniaForDog(double weight) {
 private String calculateTrazodoneForDog(double weight) {
     return (1 * weight) + " mg";
 }
+}
