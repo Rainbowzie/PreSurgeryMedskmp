@@ -5,46 +5,44 @@ import com.google.gson.Gson;
 
 public class App {
     public static void main(String[] args) {
-        port(getAssignedPort());
+        port(getHerokuAssignedPort());
 
-        // Serve static files from src/main/resources/public/
+        // Serve static files (index.html etc.) from /public
         staticFiles.location("/public");
 
-        // Health check
-        get("/health", (req, res) -> {
-            res.type("application/json");
-            return "{\"status\":\"ok\"}";
-        });
+        MedicationService medService = new MedicationService();
+        Gson gson = new Gson();
 
-        // Main endpoint: /meds?type=dog&weight=22.5
-        get("/meds", (req, res) -> {
+        // API endpoint
+        get("/medications", (req, res) -> {
             res.type("application/json");
-            String type = req.queryParams("type");
-            String w = req.queryParams("weight");
 
-            if (w == null || w.isBlank()) {
+            String type = req.queryParams("animalType");
+            String weightParam = req.queryParams("weight");
+
+            if (type == null || weightParam == null) {
                 res.status(400);
-                return "{\"error\":\"Missing 'weight' query param\"}";
+                return gson.toJson("Missing parameters: animalType and weight are required.");
             }
 
             double weight;
             try {
-                weight = Double.parseDouble(w);
-            } catch (NumberFormatException nfe) {
+                weight = Double.parseDouble(weightParam);
+            } catch (NumberFormatException e) {
                 res.status(400);
-                return "{\"error\":\"'weight' must be a number\"}";
+                return gson.toJson("Invalid weight: must be a number.");
             }
 
-            MedicationService svc = new MedicationService();
-            MedicationService.MedResponse response = svc.getMedications(type, weight);
-            return new Gson().toJson(response);
+            MedicationService.MedResponse response = medService.getMedications(type, weight);
+            return gson.toJson(response);
         });
     }
 
-    private static int getAssignedPort() {
-        String p = System.getenv("PORT");
-        if (p != null) return Integer.parseInt(p);
-        return 4567; // local dev
+    static int getHerokuAssignedPort() {
+        String port = System.getenv("PORT");
+        if (port != null) {
+            return Integer.parseInt(port);
+        }
+        return 4567; // default for local testing
     }
 }
-
