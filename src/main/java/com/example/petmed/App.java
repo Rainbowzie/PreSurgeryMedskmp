@@ -5,44 +5,48 @@ import com.google.gson.Gson;
 
 public class App {
     public static void main(String[] args) {
-        port(getHerokuAssignedPort());
+        port(getHerokuAssignedPort()); // Render/Heroku dynamic port fallback
 
-        // Serve static files (index.html etc.) from /public
+        Gson gson = new Gson();
+
+        // Serve static frontend files from src/main/resources/public
         staticFiles.location("/public");
 
-        MedicationService medService = new MedicationService();
-        Gson gson = new Gson();
+        // Root route -> loads index.html automatically
+        get("/", (req, res) -> {
+            res.redirect("/index.html");
+            return null;
+        });
 
         // API endpoint
         get("/medications", (req, res) -> {
             res.type("application/json");
 
-            String type = req.queryParams("animalType");
+            String animalType = req.queryParams("animalType");
             String weightParam = req.queryParams("weight");
 
-            if (type == null || weightParam == null) {
+            if (animalType == null || weightParam == null) {
                 res.status(400);
-                return gson.toJson("Missing parameters: animalType and weight are required.");
+                return gson.toJson("Missing parameters: animalType and weight are required");
             }
 
-            double weight;
             try {
-                weight = Double.parseDouble(weightParam);
+                int weight = Integer.parseInt(weightParam);
+                return gson.toJson(MedicationService.getMedications(animalType, weight));
             } catch (NumberFormatException e) {
                 res.status(400);
-                return gson.toJson("Invalid weight: must be a number.");
+                return gson.toJson("Invalid weight value");
             }
-
-            MedicationService.MedResponse response = medService.getMedications(type, weight);
-            return gson.toJson(response);
         });
     }
 
+    // Utility to support dynamic ports (needed for Render/Heroku)
     static int getHerokuAssignedPort() {
         String port = System.getenv("PORT");
         if (port != null) {
             return Integer.parseInt(port);
         }
-        return 4567; // default for local testing
+        return 4567;
     }
 }
+
