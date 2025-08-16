@@ -28,20 +28,18 @@ public class MedicationService {
     }
 
     private String calculateGabapentinForCat(double weight) {
-        return weight + " mg"; // replace with your real formula
-    }
-
-    private String calculateGabapentinForDog(double weight) {
-        return weight + " mg";
-    }
-
-    private String calculateCereniaForDog(double weight) {
-        return weight + " mg";
-    }
-
-    private String calculateTrazodoneForDog(double weight) {
-        return weight + " mg";
-    }
+    // Example: 5 mg per pound
+    return (5 * weight) + " mg";
 }
 
+private String calculateGabapentinForDog(double weight) {
+    return (5 * weight) + " mg";
+}
 
+private String calculateCereniaForDog(double weight) {
+    return (2 * weight) + " mg";
+}
+
+private String calculateTrazodoneForDog(double weight) {
+    return (1 * weight) + " mg";
+}
