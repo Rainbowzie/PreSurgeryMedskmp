@@ -2,54 +2,28 @@ package com.example.petmed;
 
 import static spark.Spark.*;
 
-import com.google.gson.Gson;
-import java.util.HashMap;
-import java.util.Map;
-
 public class App {
     public static void main(String[] args) {
-        // Render requires Spark to listen on PORT env variable
-        port(getHerokuAssignedPort());
+        // Tell Spark where to find static files (index.html, CSS, JS)
+        staticFiles.location("/public");
 
-        // Basic test route
-        get("/", (req, res) -> "🚀 PetMed API is running!");
+        // Optionally keep your test route for debugging
+        get("/hello", (req, res) -> "🚀 PetMed API is running!");
 
-        // Main meds route
+        // Your existing /meds API route stays the same
         get("/meds", (req, res) -> {
-            String pet = req.queryParams("pet");
-            String weightParam = req.queryParams("weight");
-            double weight = (weightParam != null) ? Double.parseDouble(weightParam) : 0;
+            String type = req.queryParams("type");
+            String weightStr = req.queryParams("weight");
+            int weight = Integer.parseInt(weightStr);
 
-            Map<String, String> meds = new HashMap<>();
-            if ("cat".equalsIgnoreCase(pet)) {
-                meds.put("Gabapentin", calcDose(weight, "cat"));
-            } else if ("dog".equalsIgnoreCase(pet)) {
-                meds.put("Gabapentin", calcDose(weight, "dog"));
-                meds.put("Cerenia", "Give 2 hours before surgery");
-                meds.put("Trazodone", "Give night before surgery");
+            if (type.equalsIgnoreCase("cat")) {
+                return "Give Gabapentin (" + weight + "mg)";
+            } else if (type.equalsIgnoreCase("dog")) {
+                return "Give Gabapentin, Cerenia, Trazodone (" + weight + "mg each)";
             } else {
-                res.status(400);
-                return "Invalid pet type. Use 'dog' or 'cat'.";
+                return "Unknown pet type.";
             }
-
-            res.type("application/json");
-            return new Gson().toJson(meds);
         });
     }
-
-    private static int getHerokuAssignedPort() {
-        String port = System.getenv("PORT");
-        if (port != null) {
-            return Integer.parseInt(port);
-        }
-        return 4567; // default when running locally
-    }
-
-    private static String calcDose(double weight, String pet) {
-        if ("cat".equalsIgnoreCase(pet)) {
-            return weight * 10 + " mg Gabapentin";
-        } else {
-            return weight * 5 + " mg Gabapentin";
-        }
-    }
 }
+
