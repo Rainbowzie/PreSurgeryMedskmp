@@ -2,13 +2,6 @@ package com.example.petmed;
 
 public class MedicationService {
 
-    public static class MedResponse {
-        public String gabapentin;
-        public String cerenia;
-        public String trazodone;
-    }
-
-
     public MedResponse getMedications(String type, double weight) {
         MedResponse resp = new MedResponse();
 
@@ -41,7 +34,7 @@ public class MedicationService {
         return (1 * weight) + " mg Trazodone";
     }
 
-    // This nested class becomes JSON automatically
+    // Nested class used for JSON response
     public static class MedResponse {
         public String gabapentin;
         public String cerenia;
@@ -49,6 +42,3 @@ public class MedicationService {
     }
 }
 
-    return (1 * weight) + " mg";
-}
-}
