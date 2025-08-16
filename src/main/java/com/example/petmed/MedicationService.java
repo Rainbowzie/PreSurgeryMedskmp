@@ -1,44 +1,35 @@
 package com.example.petmed;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class MedicationService {
 
-    public MedResponse getMedications(String type, double weight) {
-        MedResponse resp = new MedResponse();
+    // Static method (so you can call MedicationService.getMedications() directly)
+    public static Map<String, Object> getMedications(String animalType, int weight) {
+        Map<String, Object> result = new HashMap<>();
 
-        if (type.equalsIgnoreCase("cat")) {
-            resp.gabapentin = calculateGabapentinForCat(weight);
-        } else if (type.equalsIgnoreCase("dog")) {
-            resp.gabapentin = calculateGabapentinForDog(weight);
-            resp.cerenia = calculateCereniaForDog(weight);
-            resp.trazodone = calculateTrazodoneForDog(weight);
-        } else {
-            resp.gabapentin = "Unknown animal type";
+        if (animalType == null || animalType.isEmpty()) {
+            result.put("error", "Animal type is required");
+            return result;
         }
 
-        return resp;
-    }
+        animalType = animalType.toLowerCase();
 
-    private String calculateGabapentinForCat(double weight) {
-        return (5 * weight) + " mg Gabapentin";
-    }
+        if (animalType.equals("cat")) {
+            // Cats only get Gabapentin
+            result.put("animal", "cat");
+            result.put("weight", weight);
+            result.put("medications", new String[]{"Gabapentin"});
+        } else if (animalType.equals("dog")) {
+            // Dogs get Gabapentin, Cerenia, and Trazodone
+            result.put("animal", "dog");
+            result.put("weight", weight);
+            result.put("medications", new String[]{"Gabapentin", "Cerenia", "Trazodone"});
+        } else {
+            result.put("error", "Unknown animal type: " + animalType);
+        }
 
-    private String calculateGabapentinForDog(double weight) {
-        return (5 * weight) + " mg Gabapentin";
-    }
-
-    private String calculateCereniaForDog(double weight) {
-        return (2 * weight) + " mg Cerenia";
-    }
-
-    private String calculateTrazodoneForDog(double weight) {
-        return (1 * weight) + " mg Trazodone";
-    }
-
-    // Nested class used for JSON response
-    public static class MedResponse {
-        public String gabapentin;
-        public String cerenia;
-        public String trazodone;
+        return result;
     }
 }
-
