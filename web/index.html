@@ -1,1 +1,11 @@
+<script>
+async function getMeds() {
+  const type = document.getElementById("animalType").value;
+  const weight = document.getElementById("weight").value;
 
+  const response = await fetch(`/medications?animalType=${type}&weight=${weight}`);
+  const data = await response.json();
+
+  document.getElementById("results").innerText = JSON.stringify(data, null, 2);
+}
+</script>
