@@ -8,39 +8,47 @@ public class MedicationService {
         public String trazodone;
     }
 
+
     public MedResponse getMedications(String type, double weight) {
         MedResponse resp = new MedResponse();
 
-        if ("cat".equalsIgnoreCase(type)) {
+        if (type.equalsIgnoreCase("cat")) {
             resp.gabapentin = calculateGabapentinForCat(weight);
-            resp.cerenia = null;
-            resp.trazodone = null;
-        } else if ("dog".equalsIgnoreCase(type)) {
+        } else if (type.equalsIgnoreCase("dog")) {
             resp.gabapentin = calculateGabapentinForDog(weight);
             resp.cerenia = calculateCereniaForDog(weight);
             resp.trazodone = calculateTrazodoneForDog(weight);
         } else {
-            resp.gabapentin = null;
-            resp.cerenia = null;
-            resp.trazodone = null;
+            resp.gabapentin = "Unknown animal type";
         }
+
         return resp;
     }
 
     private String calculateGabapentinForCat(double weight) {
-    // Example: 5 mg per pound
-    return (5 * weight) + " mg";
+        return (5 * weight) + " mg Gabapentin";
+    }
+
+    private String calculateGabapentinForDog(double weight) {
+        return (5 * weight) + " mg Gabapentin";
+    }
+
+    private String calculateCereniaForDog(double weight) {
+        return (2 * weight) + " mg Cerenia";
+    }
+
+    private String calculateTrazodoneForDog(double weight) {
+        return (1 * weight) + " mg Trazodone";
+    }
+
+    // This nested class becomes JSON automatically
+    public static class MedResponse {
+        public String gabapentin;
+        public String cerenia;
+        public String trazodone;
+    }
 }
 
-private String calculateGabapentinForDog(double weight) {
-    return (5 * weight) + " mg";
-}
-
-private String calculateCereniaForDog(double weight) {
-    return (2 * weight) + " mg";
-}
-
-private String calculateTrazodoneForDog(double weight) {
     return (1 * weight) + " mg";
 }
 }
