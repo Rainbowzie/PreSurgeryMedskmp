@@ -1,95 +1,131 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>PetMed Pre-Surgical Medications</title>
+  <meta charset="utf-8" />
+  <title>Pre-Surgery Pet Medications</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body { font-family: Arial, sans-serif; margin: 2rem; }
-    label, select, input, button { display: block; margin: 0.5rem 0; }
-    #results { margin-top: 1rem; padding: 1rem; border: 1px solid #ccc; background: #f9f9f9; white-space: pre-wrap; }
+    body { font-family: Arial, sans-serif; margin: 2rem; background: #f7f7fb; }
+    .card { background: white; padding: 1rem 1.25rem; border-radius: 12px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); max-width: 680px; }
+    label, select, input { display: block; margin: 0.5rem 0; width: 100%; }
+    input, select, button { padding: 0.6rem 0.75rem; border: 1px solid #ddd; border-radius: 10px; font-size: 1rem; }
+    button { background: #2f80ed; color: white; border: none; cursor: pointer; margin-top: 0.5rem; }
+    button:hover { filter: brightness(0.95); }
+    #results { margin-top: 1rem; padding: 1rem; background: #fff; border-radius: 10px; border: 1px solid #eee; }
+    h3 { margin: 0.5rem 0 0.75rem; }
+    h4 { margin: 0.75rem 0 0.25rem; color: #2f80ed; }
+    ul { margin: 0 0 0.75rem 1.25rem; padding: 0; }
+    li { margin-bottom: 0.25rem; }
   </style>
 </head>
 <body>
-  <h1>PetMed Pre-Surgical Medications</h1>
+  <div class="card">
+    <h2>Pre-Surgery Pet Medications</h2>
 
-  <form id="medForm">
-    <label for="animalType">Animal Type:</label>
-    <select id="animalType" name="animal">
-      <option value="dog">Dog</option>
-      <option value="cat">Cat</option>
-    </select>
+    <form id="medForm">
+      <label for="animalType">Animal Type:</label>
+      <select id="animalType" name="animal">
+        <option value="dog">Dog</option>
+        <option value="cat">Cat</option>
+      </select>
 
-    <label for="weight">Weight (lbs):</label>
-    <input type="number" id="weight" name="weight" min="1" required>
+      <label for="weight">Weight (lbs):</label>
+      <!-- allow decimals -->
+      <input type="number" id="weight" name="weight" step="any" min="0" placeholder="e.g., 54.3" required>
 
-    <button type="submit">Get Medication Instructions</button>
-  </form>
+      <button type="submit">Get Medication Instructions</button>
+    </form>
 
-  <pre id="results">Results will appear here...</pre>
+    <div id="results">Results will appear here…</div>
+  </div>
 
-<script>
-  const form = document.getElementById('medForm');
-  const results = document.getElementById('results');
+  <script>
+    const form = document.getElementById('medForm');
+    const results = document.getElementById('results');
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-    const animal = document.getElementById('animalType').value;
-    const weight = document.getElementById('weight').value;
+      const animal = document.getElementById('animalType').value;
+      const weight = document.getElementById('weight').value;
 
-    if (!weight) {
-      results.textContent = "❌ Please enter a weight.";
-      return;
-    }
-
-    const base = window.location.origin;
-    const url = `${base}/medications?animal=${encodeURIComponent(animal)}&weight=${encodeURIComponent(weight)}`;
-
-    try {
-      const res = await fetch(url);
-      if (!res.ok) {
-        results.textContent = `❌ Error: ${res.status}`;
+      if (!weight) {
+        results.textContent = "❌ Please enter a weight.";
         return;
       }
-      const data = await res.json();
 
-      // clear the box
-      results.innerHTML = "";
+      const base = window.location.origin; // e.g. https://presurgerymeds-kmp.onrender.com
+      const url = `${base}/medications?animal=${encodeURIComponent(animal)}&weight=${encodeURIComponent(weight)}`;
 
-      // show header
-      const title = document.createElement("h3");
-      title.textContent = `${data.animal.toUpperCase()} (${data.weight} lbs)`;
-      results.appendChild(title);
-
-      // render medications nicely
-      let currentSection;
-      data.medications.forEach(line => {
-        if (line.startsWith("---")) {
-          // it's a section header
-          currentSection = document.createElement("h4");
-          currentSection.textContent = line.replace(/---/g, "").trim();
-          results.appendChild(currentSection);
-        } else {
-          // it's a recommendation
-          const li = document.createElement("li");
-          li.textContent = line;
-          // if no UL exists under current section, create one
-          let lastChild = results.lastElementChild;
-          if (!lastChild || lastChild.tagName.toLowerCase() !== "ul") {
-            const ul = document.createElement("ul");
-            results.appendChild(ul);
-            ul.appendChild(li);
-          } else {
-            lastChild.appendChild(li);
-          }
+      try {
+        const res = await fetch(url);
+        if (!res.ok) {
+          const text = await res.text();
+          results.textContent = `❌ Error ${res.status}: ${text}`;
+          return;
         }
-      });
-    } catch (err) {
-      results.textContent = "❌ Request failed: " + err.message;
-    }
-  });
-</script>
+        const data = await res.json();
 
+        // Clear
+        results.innerHTML = "";
+
+        // Title
+        const title = document.createElement("h3");
+        title.textContent = `${data.animal.toUpperCase()} (${data.weight} lbs)`;
+        results.appendChild(title);
+
+        // Render sections
+        let currentUl = null;
+        (data.medications || []).forEach(line => {
+          if (typeof line !== "string") return;
+
+          if (line.startsWith("---")) {
+            const h4 = document.createElement("h4");
+            h4.textContent = line.replace(/---/g, "").trim();
+            results.appendChild(h4);
+            currentUl = document.createElement("ul");
+            results.appendChild(currentUl);
+          } else {
+            const li = document.createElement("li");
+
+            // warnings in red with ❌
+            const lower = line.toLowerCase();
+            const isWarning = lower.startsWith("no ") || lower.includes("do not dispense");
+            if (isWarning) {
+              const icon = document.createElement("span");
+              icon.textContent = "❌ ";
+              icon.style.color = "red";
+              icon.style.fontWeight = "bold";
+              const text = document.createElement("span");
+              text.textContent = line;
+              text.style.color = "red";
+              text.style.fontWeight = "bold";
+              li.appendChild(icon);
+              li.appendChild(text);
+            } else {
+              li.textContent = line;
+            }
+
+            if (currentUl) currentUl.appendChild(li);
+          }
+        });
+
+        if ((!data.medications || data.medications.length === 0) && !data.error) {
+          results.textContent = "No medication recommendations returned.";
+        }
+        if (data.error) {
+          const p = document.createElement("p");
+          p.style.color = "red";
+          p.style.fontWeight = "bold";
+          p.textContent = "❌ " + data.error;
+          results.appendChild(p);
+        }
+      } catch (err) {
+        results.textContent = "❌ Request failed: " + err.message;
+      }
+    });
+  </script>
 </body>
 </html>
+
 
