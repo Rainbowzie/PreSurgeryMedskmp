@@ -20,13 +20,15 @@ public class App {
                 if (animal == null || weightParam == null) {
                     return gson.toJson(error("Missing parameters: animal and weight are required"));
                 }
-                double weight = Integer.parseInt(weightParam);
+                double weight = Double.parseDouble(weightParam);
                 return gson.toJson(MedicationService.getMedications(animal, weight));
-            } catch (NumberFormatException e) {
-                return gson.toJson(error("Invalid weight value (must be a number)"));
-            } catch (Exception e) {
-                return gson.toJson(error("Server error: " + e.getMessage()));
-            }
+           } catch (NumberFormatException e) {
+    res.status(400);
+    res.type("application/json");
+    return new com.google.gson.Gson().toJson("Invalid weight value");
+}
+
+return new com.google.gson.Gson().toJson(MedicationService.getMedications(animal, weight));
         };
 
         // GET routes
