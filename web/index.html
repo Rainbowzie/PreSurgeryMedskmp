@@ -24,7 +24,7 @@
       }
       const data = await res.json();
 
-      // clear
+      // clear previous
       results.innerHTML = "";
 
       // title
@@ -32,11 +32,10 @@
       title.textContent = `${data.animal.toUpperCase()} (${data.weight} lbs)`;
       results.appendChild(title);
 
-      // render meds
+      // build sections
       let currentUl;
       data.medications.forEach(line => {
         if (line.startsWith("---")) {
-          // section header
           const h4 = document.createElement("h4");
           h4.textContent = line.replace(/---/g, "").trim();
           results.appendChild(h4);
@@ -44,12 +43,24 @@
           results.appendChild(currentUl);
         } else {
           const li = document.createElement("li");
-          li.textContent = line;
 
-          // warnings in red
-          if (line.toLowerCase().includes("no ") || line.toLowerCase().includes("do not dispense")) {
-            li.style.color = "red";
-            li.style.fontWeight = "bold";
+          // detect warnings
+          const warn = /(^no\s)|(^do not dispense)/i.test(line);
+          if (warn) {
+            const icon = document.createElement("span");
+            icon.textContent = "❌ ";
+            icon.style.color = "red";
+            icon.style.fontWeight = "bold";
+
+            const text = document.createElement("span");
+            text.textContent = line;
+            text.style.color = "red";
+            text.style.fontWeight = "bold";
+
+            li.appendChild(icon);
+            li.appendChild(text);
+          } else {
+            li.textContent = line;
           }
 
           if (currentUl) currentUl.appendChild(li);
