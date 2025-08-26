@@ -27,26 +27,69 @@
 
   <pre id="results">Results will appear here...</pre>
 
-  <script>
-    const form = document.getElementById('medForm');
-    const results = document.getElementById('results');
+<script>
+  const form = document.getElementById('medForm');
+  const results = document.getElementById('results');
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault(); // <-- avoids navigation/404
-      const animal = document.getElementById('animalType').value;
-      const weight = document.getElementById('weight').value;
-      if (!weight) { results.textContent = "❌ Please enter a weight."; return; }
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-      const url = `/medications?animal=${encodeURIComponent(animal)}&weight=${encodeURIComponent(weight)}`;
-      try {
-        const res = await fetch(url, { method: 'GET' });
-        const text = await res.text(); // show raw for debugging
-        results.textContent = text;
-      } catch (err) {
-        results.textContent = "❌ Request failed: " + err.message;
+    const animal = document.getElementById('animalType').value;
+    const weight = document.getElementById('weight').value;
+
+    if (!weight) {
+      results.textContent = "❌ Please enter a weight.";
+      return;
+    }
+
+    const base = window.location.origin;
+    const url = `${base}/medications?animal=${encodeURIComponent(animal)}&weight=${encodeURIComponent(weight)}`;
+
+    try {
+      const res = await fetch(url);
+      if (!res.ok) {
+        results.textContent = `❌ Error: ${res.status}`;
+        return;
       }
-    });
-  </script>
+      const data = await res.json();
+
+      // clear the box
+      results.innerHTML = "";
+
+      // show header
+      const title = document.createElement("h3");
+      title.textContent = `${data.animal.toUpperCase()} (${data.weight} lbs)`;
+      results.appendChild(title);
+
+      // render medications nicely
+      let currentSection;
+      data.medications.forEach(line => {
+        if (line.startsWith("---")) {
+          // it's a section header
+          currentSection = document.createElement("h4");
+          currentSection.textContent = line.replace(/---/g, "").trim();
+          results.appendChild(currentSection);
+        } else {
+          // it's a recommendation
+          const li = document.createElement("li");
+          li.textContent = line;
+          // if no UL exists under current section, create one
+          let lastChild = results.lastElementChild;
+          if (!lastChild || lastChild.tagName.toLowerCase() !== "ul") {
+            const ul = document.createElement("ul");
+            results.appendChild(ul);
+            ul.appendChild(li);
+          } else {
+            lastChild.appendChild(li);
+          }
+        }
+      });
+    } catch (err) {
+      results.textContent = "❌ Request failed: " + err.message;
+    }
+  });
+</script>
+
 </body>
 </html>
 
