@@ -20,7 +20,7 @@ public class App {
                 if (animal == null || weightParam == null) {
                     return gson.toJson(error("Missing parameters: animal and weight are required"));
                 }
-                int weight = Integer.parseInt(weightParam);
+                double weight = Integer.parseInt(weightParam);
                 return gson.toJson(MedicationService.getMedications(animal, weight));
             } catch (NumberFormatException e) {
                 return gson.toJson(error("Invalid weight value (must be a number)"));
