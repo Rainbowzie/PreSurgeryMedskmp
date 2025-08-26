@@ -5,7 +5,7 @@ import java.util.*;
 public class MedicationService {
 
     // Main entry: returns JSON-friendly map
-    public static Map<String, Object> getMedications(String animalType, int weightLbs) {
+    public static Map<String, Object> getMedications(String animalType, double weightLbs) {
         Map<String, Object> out = new LinkedHashMap<>();
         if (animalType == null) {
             out.put("error", "Animal type required");
