@@ -4,42 +4,142 @@
   <meta charset="utf-8" />
   <title>Pre-Surgery Pet Medications</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Social share preview (edit to taste) -->
+  <meta property="og:title" content="Pre-Surgery Pet Medications" />
+  <meta property="og:description" content="Quick dosing guide for dogs and cats — gabapentin, cerenia, trazodone." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="" id="og-url" />
+
   <style>
-    body { font-family: Arial, sans-serif; margin: 2rem; background: #f7f7fb; }
-    .card { background: white; padding: 1rem 1.25rem; border-radius: 12px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); max-width: 680px; }
-    label, select, input { display: block; margin: 0.5rem 0; width: 100%; }
-    input, select, button { padding: 0.6rem 0.75rem; border: 1px solid #ddd; border-radius: 10px; font-size: 1rem; }
-    button { background: #2f80ed; color: white; border: none; cursor: pointer; margin-top: 0.5rem; }
-    button:hover { filter: brightness(0.95); }
-    #results { margin-top: 1rem; padding: 1rem; background: #fff; border-radius: 10px; border: 1px solid #eee; }
-    h3 { margin: 0.5rem 0 0.75rem; }
-    h4 { margin: 0.75rem 0 0.25rem; color: #2f80ed; }
-    ul { margin: 0 0 0.75rem 1.25rem; padding: 0; }
-    li { margin-bottom: 0.25rem; }
+    :root {
+      /* Brand color — change this to match your clinic */
+      --accent: #2f80ed;
+    }
+    * { box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; margin: 0; background: #f7f7fb; color: #111; }
+    header { background: #fff; border-bottom: 1px solid #eee; }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 1rem; }
+    .brand { display: flex; align-items: center; gap: .75rem; }
+    .brand img { width: 40px; height: 40px; object-fit: cover; border-radius: 8px; }
+    .brand h1 { font-size: 1.15rem; margin: 0; }
+    .card { background: #fff; padding: 1rem 1.25rem; border-radius: 14px; box-shadow: 0 1px 8px rgba(0,0,0,0.08); }
+    main { padding: 1.25rem; }
+    form { display: grid; gap: .75rem; grid-template-columns: 1fr 1fr; }
+    form label { font-weight: 600; }
+    form .row { display: grid; gap: .25rem; }
+    select, input, button { padding: .65rem .75rem; border: 1px solid #ddd; border-radius: 10px; font-size: 1rem; }
+    button { background: var(--accent); color: white; border: none; cursor: pointer; }
+    button:hover { filter: brightness(.95); }
+    .actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
+    .secondary { background: #fff; color: #111; border: 1px solid #ddd; }
+    #results { margin-top: 1rem; padding: 1rem; background: #fff; border-radius: 12px; border: 1px solid #eee; }
+    h3 { margin: 0.25rem 0 .75rem; }
+    h4 { margin: .75rem 0 .25rem; color: var(--accent); }
+    ul { margin: 0 0 .75rem 1.25rem; padding: 0; }
+    li { margin-bottom: .25rem; }
+    .sharebar { display: flex; gap: .5rem; align-items: center; margin-top: .75rem; }
+    .sharebar input { flex: 1; }
+    .notice { color: #666; font-size: .9rem; margin-top: .5rem; }
+    footer { text-align: center; padding: 1rem; color: #777; font-size: .9rem; }
+    @media (max-width: 720px) {
+      form { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2>Pre-Surgery Pet Medications</h2>
+  <header>
+    <div class="wrap">
+      <div class="brand">
+        <!-- EDIT: Put your logo URL here, or leave empty to hide -->
+        <img id="brandLogo" alt="" />
+        <!-- EDIT: Your clinic/brand name here -->
+        <h1 id="brandName">KMP Pre-Surgery Meds</h1>
+      </div>
+    </div>
+  </header>
 
-    <form id="medForm">
-      <label for="animalType">Animal Type:</label>
-      <select id="animalType" name="animal">
-        <option value="dog">Dog</option>
-        <option value="cat">Cat</option>
-      </select>
+  <main>
+    <div class="wrap">
+      <div class="card">
+        <form id="medForm">
+          <div class="row">
+            <label for="animalType">Animal Type</label>
+            <select id="animalType" name="animal">
+              <option value="dog">Dog</option>
+              <option value="cat">Cat</option>
+            </select>
+          </div>
 
-      <label for="weight">Weight (lbs):</label>
-      <!-- allow decimals -->
-      <input type="number" id="weight" name="weight" step="any" min="0" placeholder="e.g., 54.3" required>
+          <div class="row">
+            <label for="weight">Weight (lbs)</label>
+            <!-- allow decimals -->
+            <input type="number" id="weight" name="weight" step="any" min="0" placeholder="e.g., 54.3" required>
+          </div>
 
-      <button type="submit">Get Medication Instructions</button>
-    </form>
+          <div class="row" style="grid-column:1 / -1">
+            <button type="submit">Get Medication Instructions</button>
+            <div class="actions">
+              <button type="button" class="secondary" id="copyResultsBtn">Copy Results</button>
+              <button type="button" class="secondary" id="printBtn">Print</button>
+              <button type="button" class="secondary" id="copyLinkBtn">Copy App Link</button>
+            </div>
+            <div class="notice">This tool provides pre-surgical instruction text. Always verify dosing per your clinic protocol.</div>
+          </div>
+        </form>
 
-    <div id="results">Results will appear here…</div>
-  </div>
+        <div id="results">Results will appear here…</div>
+
+        <div class="sharebar">
+          <input type="text" id="appLink" readonly />
+          <button type="button" id="copyLinkBtn2">Copy Link</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+    <footer>
+    <div style="max-width:720px; margin:0 auto; padding:1rem; font-size:0.8rem; line-height:1.4; color:#777;">
+      <p style="margin:0 0 0.75rem 0;">
+        <strong>Disclaimer:</strong> This tool is intended as a quick reference for pre-surgical
+        medication instructions for dogs and cats. Dosages and instructions should always be confirmed
+        against your clinic’s official protocol and a licensed veterinarian’s judgment. Use at your own discretion.
+      </p>
+      <p style="margin:0; text-align:center;">
+        © Kirsten Peryer 2025
+      </p>
+    </div>
+  </footer>
+
 
   <script>
+    // ======== Branding: edit these 3 lines ========
+    const BRAND_NAME = "KMP Pre-Surgery Meds";            // your clinic/app name
+    const BRAND_LOGO_URL = "";                             // e.g. "https://example.com/logo.png" or "" to hide
+    const BRAND_COLOR = "#2f80ed";                         // hex color for accent
+    // ==============================================
+
+    // Apply brand
+    document.documentElement.style.setProperty('--accent', BRAND_COLOR);
+    document.getElementById('brandName').textContent = BRAND_NAME;
+    document.getElementById('brandNameFooter').textContent = BRAND_NAME;
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const brandLogoEl = document.getElementById('brandLogo');
+    if (BRAND_LOGO_URL) {
+      brandLogoEl.src = BRAND_LOGO_URL;
+      brandLogoEl.style.display = 'block';
+      brandLogoEl.alt = BRAND_NAME;
+    } else {
+      brandLogoEl.style.display = 'none';
+    }
+
+    // Share link setup
+    const origin = window.location.origin;
+    const appLinkEl = document.getElementById('appLink');
+    appLinkEl.value = origin; // share your live app URL
+    const og = document.getElementById('og-url');
+    if (og) og.setAttribute('content', origin);
+
     const form = document.getElementById('medForm');
     const results = document.getElementById('results');
 
@@ -54,8 +154,7 @@
         return;
       }
 
-      const base = window.location.origin; // e.g. https://presurgerymeds-kmp.onrender.com
-      const url = `${base}/medications?animal=${encodeURIComponent(animal)}&weight=${encodeURIComponent(weight)}`;
+      const url = `${origin}/medications?animal=${encodeURIComponent(animal)}&weight=${encodeURIComponent(weight)}`;
 
       try {
         const res = await fetch(url);
@@ -64,66 +163,132 @@
           results.textContent = `❌ Error ${res.status}: ${text}`;
           return;
         }
+        const ct = (res.headers.get('content-type') || '').toLowerCase();
+        if (!ct.includes('application/json')) {
+          const text = await res.text();
+          results.textContent = `⚠️ Unexpected response (not JSON):\n\n${text}`;
+          return;
+        }
         const data = await res.json();
 
-        // Clear
-        results.innerHTML = "";
+        // Clear and render
+        renderResults(data);
 
-        // Title
-        const title = document.createElement("h3");
-        title.textContent = `${data.animal.toUpperCase()} (${data.weight} lbs)`;
-        results.appendChild(title);
-
-        // Render sections
-        let currentUl = null;
-        (data.medications || []).forEach(line => {
-          if (typeof line !== "string") return;
-
-          if (line.startsWith("---")) {
-            const h4 = document.createElement("h4");
-            h4.textContent = line.replace(/---/g, "").trim();
-            results.appendChild(h4);
-            currentUl = document.createElement("ul");
-            results.appendChild(currentUl);
-          } else {
-            const li = document.createElement("li");
-
-            // warnings in red with ❌
-            const lower = line.toLowerCase();
-            const isWarning = lower.startsWith("no ") || lower.includes("do not dispense");
-            if (isWarning) {
-              const icon = document.createElement("span");
-              icon.textContent = "❌ ";
-              icon.style.color = "red";
-              icon.style.fontWeight = "bold";
-              const text = document.createElement("span");
-              text.textContent = line;
-              text.style.color = "red";
-              text.style.fontWeight = "bold";
-              li.appendChild(icon);
-              li.appendChild(text);
-            } else {
-              li.textContent = line;
-            }
-
-            if (currentUl) currentUl.appendChild(li);
-          }
-        });
-
-        if ((!data.medications || data.medications.length === 0) && !data.error) {
-          results.textContent = "No medication recommendations returned.";
-        }
-        if (data.error) {
-          const p = document.createElement("p");
-          p.style.color = "red";
-          p.style.fontWeight = "bold";
-          p.textContent = "❌ " + data.error;
-          results.appendChild(p);
-        }
       } catch (err) {
         results.textContent = "❌ Request failed: " + err.message;
       }
     });
+
+    function renderResults(data) {
+      results.innerHTML = "";
+
+      // Safe title
+      const animalLabel = (data && data.animal) ? String(data.animal).toUpperCase() : "PET";
+      const weightLabel = (data && typeof data.weight !== "undefined") ? data.weight : "";
+      const title = document.createElement("h3");
+      title.textContent = weightLabel ? `${animalLabel} (${weightLabel} lbs)` : animalLabel;
+      results.appendChild(title);
+
+      if (data && data.error) {
+        const p = document.createElement("p");
+        p.style.color = "red";
+        p.style.fontWeight = "bold";
+        p.textContent = "❌ " + data.error;
+        results.appendChild(p);
+        return;
+      }
+
+      const meds = (data && Array.isArray(data.medications)) ? data.medications : [];
+      if (!meds.length) {
+        results.textContent = "No medication recommendations returned.";
+        return;
+      }
+
+      let currentUl = null;
+      meds.forEach(line => {
+        if (typeof line !== "string") return;
+
+        if (line.startsWith("---")) {
+          const h4 = document.createElement("h4");
+          h4.textContent = line.replace(/---/g, "").trim();
+          results.appendChild(h4);
+          currentUl = document.createElement("ul");
+          results.appendChild(currentUl);
+        } else {
+          const li = document.createElement("li");
+          const lower = line.toLowerCase();
+          const isWarning = lower.startsWith("no ") || lower.includes("do not dispense");
+
+          if (isWarning) {
+            const icon = document.createElement("span");
+            icon.textContent = "❌ ";
+            icon.style.color = "red";
+            icon.style.fontWeight = "bold";
+            const text = document.createElement("span");
+            text.textContent = line;
+            text.style.color = "red";
+            text.style.fontWeight = "bold";
+            li.appendChild(icon);
+            li.appendChild(text);
+          } else {
+            li.textContent = line;
+          }
+
+          if (currentUl) currentUl.appendChild(li);
+        }
+      });
+    }
+
+    // Copy results (plain text)
+    async function copyResults() {
+      const text = buildPlainText(results);
+      try {
+        await navigator.clipboard.writeText(text);
+        alert("Results copied to clipboard.");
+      } catch {
+        // fallback
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        alert("Results copied to clipboard.");
+      }
+    }
+
+    // Build a clean text block from the rendered results
+    function buildPlainText(root) {
+      if (!root) return "";
+      const lines = [];
+      root.querySelectorAll("h3, h4, li").forEach(el => {
+        if (el.tagName === "H3") lines.push(el.textContent.trim());
+        if (el.tagName === "H4") lines.push("\n" + el.textContent.trim());
+        if (el.tagName === "LI")  lines.push("• " + el.innerText.replace(/^❌\s*/, "").trim());
+      });
+      return lines.join("\n");
+    }
+
+    // Print
+    function printResults() { window.print(); }
+
+    // Copy app link
+    async function copyLink() {
+      try {
+        await navigator.clipboard.writeText(origin);
+        alert("App link copied.");
+      } catch {
+        appLinkEl.select();
+        document.execCommand("copy");
+        alert("App link copied.");
+      }
+    }
+
+    // Buttons
+    document.getElementById('copyResultsBtn').addEventListener('click', copyResults);
+    document.getElementById('printBtn').addEventListener('click', printResults);
+    document.getElementById('copyLinkBtn').addEventListener('click', copyLink);
+    document.getElementById('copyLinkBtn2').addEventListener('click', copyLink);
   </script>
 </body>
 </html>
