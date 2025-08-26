@@ -13,54 +13,53 @@
       return;
     }
 
-    const base = window.location.origin; // e.g. https://presurgerymeds-kmp.onrender.com
+    const base = window.location.origin;
     const url = `${base}/medications?animal=${encodeURIComponent(animal)}&weight=${encodeURIComponent(weight)}`;
 
     try {
-      const res = await fetch(url, { method: 'GET' });
-
-      // if server ever sends HTML (like an error page), guard against it
-      const contentType = res.headers.get('content-type') || '';
+      const res = await fetch(url);
       if (!res.ok) {
-        const text = await res.text();
-        results.textContent = `❌ Error ${res.status}: ${text}`;
+        results.textContent = `❌ Error: ${res.status}`;
         return;
       }
-      if (!contentType.includes('application/json')) {
-        const text = await res.text();
-        results.textContent = `⚠️ Unexpected response (not JSON):\n\n${text}`;
-        return;
-      }
-
       const data = await res.json();
 
-      // pretty render
-      results.innerHTML = ""; // clear
-      if (data.error) {
-        results.textContent = `❌ ${data.error}`;
-        return;
-      }
+      // clear
+      results.innerHTML = "";
 
-      const title = document.createElement('h3');
-      title.textContent = `Results for ${data.animal} (${data.weight} lbs)`;
+      // title
+      const title = document.createElement("h3");
+      title.textContent = `${data.animal.toUpperCase()} (${data.weight} lbs)`;
       results.appendChild(title);
 
-      if (Array.isArray(data.medications) && data.medications.length) {
-        const ul = document.createElement('ul');
-        data.medications.forEach(med => {
-          const li = document.createElement('li');
-          li.textContent = med;
-          ul.appendChild(li);
-        });
-        results.appendChild(ul);
-      } else {
-        const p = document.createElement('p');
-        p.textContent = "No medication recommendations returned.";
-        results.appendChild(p);
-      }
+      // render meds
+      let currentUl;
+      data.medications.forEach(line => {
+        if (line.startsWith("---")) {
+          // section header
+          const h4 = document.createElement("h4");
+          h4.textContent = line.replace(/---/g, "").trim();
+          results.appendChild(h4);
+          currentUl = document.createElement("ul");
+          results.appendChild(currentUl);
+        } else {
+          const li = document.createElement("li");
+          li.textContent = line;
+
+          // warnings in red
+          if (line.toLowerCase().includes("no ") || line.toLowerCase().includes("do not dispense")) {
+            li.style.color = "red";
+            li.style.fontWeight = "bold";
+          }
+
+          if (currentUl) currentUl.appendChild(li);
+        }
+      });
+
     } catch (err) {
       results.textContent = "❌ Request failed: " + err.message;
     }
   });
 </script>
+
 
