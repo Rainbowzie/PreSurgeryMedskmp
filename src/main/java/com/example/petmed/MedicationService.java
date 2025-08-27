@@ -46,7 +46,7 @@ public class MedicationService {
         } else if (w >= 17 && w <= 27.99) {
             a.add("Gabapentin 100mg #4. Give 2 tablets by mouth the night before and morning of surgery.");
         } else {
-            a.add("No gabapentin dosage recommendation for this weight.");
+            a.add("No Gabapentin dosage recommendation for this weight.");
         }
         return a;
     }
@@ -80,7 +80,7 @@ public class MedicationService {
         } else if (w >= 138 && w <= 155.99) {
             a.add("Gabapentin 800mg #4. Give 2 tablets by mouth the night before and morning of surgery.");
         } else {
-            a.add("No gabapentin dosage recommendation for this weight.");
+            a.add("No Gabapentin dosage recommendation for this weight.");
         }
         return a;
     }
