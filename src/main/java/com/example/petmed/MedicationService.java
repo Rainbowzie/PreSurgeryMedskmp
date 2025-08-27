@@ -20,9 +20,9 @@ public class MedicationService {
         if (type.equals("cat")) {
             recs.addAll(gabapentinForCat(weightLbs));
         } else if (type.equals("dog")) {
-            recs.addAll(gabapentinForDog(weightLbs));
             recs.addAll(cereniaForDog(weightLbs));
             recs.addAll(trazodoneForDog(weightLbs));
+            recs.addAll(gabapentinForDog(weightLbs));
         } else {
             out.put("error", "Unknown animal type: " + animalType);
             out.put("medications", Collections.emptyList());
