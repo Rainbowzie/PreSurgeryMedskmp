@@ -86,11 +86,9 @@ public class MedicationService {
             a.add("No gabapentin dosage recommendation for this weight, please consult with DVM for dosage.");
         } else {
             a.add("No gabapentin dosage recommendation for this weight.");
-}
-
         }
         return a;
-    }
+        }    
 
     private static List<String> cereniaForDog(double w) {
         List<String> a = new ArrayList<>();
