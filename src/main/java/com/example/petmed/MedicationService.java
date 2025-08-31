@@ -45,9 +45,12 @@ public class MedicationService {
             a.add("Gabapentin 100mg #2. Give 1 tablet by mouth the night before and morning of surgery.");
         } else if (w >= 17 && w <= 27.99) {
             a.add("Gabapentin 100mg #4. Give 2 tablets by mouth the night before and morning of surgery.");
+        } else if (w > 27.99) {
+            a.add("No gabapentin dosage recommendation for this weight, please consult with DVM for dosage.");
         } else {
-            a.add("No Gabapentin dosage recommendation for this weight.");
-        }
+            a.add("No gabapentin dosage recommendation for this weight.");
+}
+
         return a;
     }
 
@@ -79,8 +82,12 @@ public class MedicationService {
             a.add("Gabapentin 600mg #4. Give 2 tablets by mouth the night before and morning of surgery.");
         } else if (w >= 138 && w <= 155.99) {
             a.add("Gabapentin 800mg #4. Give 2 tablets by mouth the night before and morning of surgery.");
+        } else if (w > 155.99) {
+            a.add("No gabapentin dosage recommendation for this weight, please consult with DVM for dosage.");
         } else {
-            a.add("No Gabapentin dosage recommendation for this weight.");
+            a.add("No gabapentin dosage recommendation for this weight.");
+}
+
         }
         return a;
     }
@@ -118,11 +125,13 @@ public class MedicationService {
             a.add("Cerenia 60mg #2. Give 2 tablets by mouth the night before surgery.");
         } else if (w <= 155.99) {
             a.add("Cerenia 160mg #2. Give 1 tablet by mouth the night before surgery.");
+        } else if (w > 155.99) {
+            a.add("No cerenia dosage recommendation for this weight, please consult with DVM for dosage.");
         } else {
-            a.add("No Cerenia dosage recommendation for this weight.");
+            a.add("No cerenia dosage recommendation for this weight.");
         }
         return a;
-    }
+        }
 
     private static List<String> trazodoneForDog(double w) {
         List<String> a = new ArrayList<>();
@@ -151,8 +160,10 @@ public class MedicationService {
             a.add("Trazodone 100mg #6. Give 3 tablets by mouth the night before and morning of surgery.");
         } else if (w <= 155.99) {
             a.add("Trazodone 100mg #8. Give 4 tablets by mouth the night before and morning of surgery.");
+        } else if (w > 155.99) {
+            a.add("No trazodone dosage recommendation for this weight, please consult with DVM for dosage.");
         } else {
-            a.add("No Trazodone dosage recommendation for this weight.");
+        a.add("No trazodone dosage recommendation for this weight.");
         }
         return a;
     }
