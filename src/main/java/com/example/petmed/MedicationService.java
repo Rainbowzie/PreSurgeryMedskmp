@@ -45,7 +45,7 @@ public class MedicationService {
         } else if (w >= 7 && w <= 9.99) {
             a.add("Gabapentin 50mg/ml #3. Give 1.5ml the night before and morning of surgery.");
         } else if (w >= 10 && w <= 16.99) {
-            a.add("Gabapentin 100mg #2. Give 1 tablet by mouth the night before and morning of surgery.");
+            a.add("Gabapentin 100mg #2. Give 1 capsule by mouth the night before and morning of surgery.");
         } else if (w >= 17 && w <= 27.99) {
             a.add("Gabapentin 100mg #4. Give 2 tablets by mouth the night before and morning of surgery.");
         } else if (w > 27.99) {
@@ -68,9 +68,9 @@ public class MedicationService {
         } else if (w >= 7 && w <= 9.99) {
             a.add("Gabapentin 50mg/ml #3. Give 1.5ml the night before and morning of surgery.");
         } else if (w >= 10 && w <= 16.99) {
-            a.add("Gabapentin 100mg #2. Give 1 tablet by mouth the night before and morning of surgery.");
+            a.add("Gabapentin 100mg #2. Give 1 capsule by mouth the night before and morning of surgery.");
         } else if (w >= 17 && w <= 27.99) {
-            a.add("Gabapentin 100mg #4. Give 2 tablets by mouth the night before and morning of surgery.");
+            a.add("Gabapentin 100mg #4. Give 2 capsule by mouth the night before and morning of surgery.");
         } else if (w >= 28 && w <= 38.99) {
             a.add("Gabapentin 600mg #1. Give 1/2 tablets by mouth the night before and morning of surgery.");
         } else if (w >= 39 && w <= 49.99) {
